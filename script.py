@@ -4,6 +4,7 @@ import sys
 dataset = sys.argv[1]
 
 print(dataset)
+// print(str(sys.argv[1]));
 
 # Choose dataset based on argument
 def choose(dataset):
