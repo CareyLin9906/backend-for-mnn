@@ -4,21 +4,9 @@ const app = express();
 const port = 4200
 app.get('/', (req, res) => {
   
-  var dataset
-  switch(req.dataset){
-    case "cat":
-      dataset = "cat"
-      break
-    case "dog":
-      dataset = "dog"
-      break
-    case "car":
-      dataset = "car"
-      break
-    case "ship":
-      dataset = "ship"
-      break
-  }
+  var dataset = req.query.dataset
+
+  console.log(dataset)
   var dataToSend = "nothing";
     // spawn new child process to call the python script
   const python = spawn('py', ['./script.py', dataset], {shell:true});
