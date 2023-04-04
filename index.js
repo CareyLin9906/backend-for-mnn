@@ -14,18 +14,21 @@ app.get('/', (req, res) => {
   python.on('error', (error) => {
       console.error(`Failed to spawn Python process: ${error}`);
     });
+  
     // collect data from script
   python.stdout.on('data', (data) => {
       console.log('Pipe data from python script ...');
       dataToSend = data.toString();
-      console.log(`stdout:${data}`)
+      console.log(`stdout:${data}`);
   });
   console.log(dataToSend)
+  
   python.stderr.on('data', (data) => {
       console.error(`stderr: ${data}`);
     });
     // in close event we are sure that stream from child process is closed
   python.stderr.pipe(process.stderr);
+  
   python.on('close', (code) => {
       console.log(`child process close all stdio with code ${code}`);
         // send data to browser
@@ -34,3 +37,12 @@ app.get('/', (req, res) => {
     
 })
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+
+
+
+
+
+
+
+// const { spawn } = require('child_process');
+// const python = spawn('py', ['./script.py', dataset]);
