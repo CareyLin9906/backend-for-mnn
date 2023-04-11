@@ -6,11 +6,11 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
 app.post('/', (req, res)=>{
-  dataset = (req.body.dataset)
+  data = (req.body.data)
   groupingCoeff = (req.body.groupingCoeff)
   var dataToSend = "nothing";
     // spawn new child process to call the python script
-  const python = spawn('py', ['./script.py', dataset, groupingCoeff], {shell:true});
+  const python = spawn('py', ['./script.py', data, groupingCoeff], {shell:true});
   console.log(python.connected)
   python.on('error', (error) => {
       console.error(`Failed to spawn Python process: ${error}`);
