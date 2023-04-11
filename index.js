@@ -2,14 +2,15 @@ const express = require('express')
 const spawn = require('child_process').spawn;
 const app = express();
 const port = 4200
-app.get('/', (req, res) => {
-  
-  var dataset = req.query.dataset
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
 
-  console.log(dataset)
+app.post('/', (req, res)=>{
+  dataset = (req.body.dataset)
+  groupingCoeff = (req.body.groupingCoeff)
   var dataToSend = "nothing";
     // spawn new child process to call the python script
-  const python = spawn('py', ['./script.py', dataset], {shell:true});
+  const python = spawn('py', ['./script.py', dataset, groupingCoeff], {shell:true});
   console.log(python.connected)
   python.on('error', (error) => {
       console.error(`Failed to spawn Python process: ${error}`);
@@ -34,7 +35,6 @@ app.get('/', (req, res) => {
         // send data to browser
       res.send({data : {dataToSend}})
   });
-    
 })
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
@@ -42,7 +42,3 @@ app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 
 
-
-
-// const { spawn } = require('child_process');
-// const python = spawn('py', ['./script.py', dataset]);
