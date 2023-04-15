@@ -10,10 +10,11 @@ class number = 5
 path of average softmax matrix: root_avgsoftmax.pth
 """
 grouping_volatility = sys.argv[2]
-softmaxMatrix = "root_avgsoftmax.pth"
+avgsoftmax = "root_avgsoftmax.pth"
 classNumber = 5
-sigmoidMembership = grouper.SigmoidMembership(classNumber, softmaxMatrix, grouping_volatility)
+pickled_filename = avgsoftmax.replace('.pth','.pickle')
+grouper.set_grouping_volatility(grouping_volatility)
+super_group_list, number_of_groups = grouper.ModelVisualSimilarityMetric(avgsoftmax, pickled_filename)
 
-
-print(data)
-print(grouping_volatility)
+print(super_group_list)
+print("/",number_of_groups)

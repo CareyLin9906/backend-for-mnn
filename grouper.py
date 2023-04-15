@@ -6,9 +6,14 @@ import argparse
 import pickle
 import copy
 
+grouping_volatility = 1.2
+def set_grouping_volatility(num):
+    global grouping_volatility
+    grouping_volatility = num
 
 def SigmoidMembership(number_of_classes,x, grouping_volatility):
-    return 1.0 / ( 1.0 + math.exp(-(x - (1.0 / number_of_classes*grouping_volatility)) / ( 1.0 / ( 10.0*number_of_classes*grouping_volatility ))) )
+    num = float(grouping_volatility)
+    return 1.0 / ( 1.0 + math.exp(-(x - (1.0 / number_of_classes*num)) / ( 1.0 / ( 10.0*number_of_classes*num ))) )
 def MakeDictionary(l):
     final_dict = defaultdict(list)
     for i in l:
@@ -25,18 +30,18 @@ def MakeDictionary(l):
                 if k not in final_dict[i]:
                     final_dict[i].append(k)
     return final_dict
-def ModelVisualSimilarityMetric(model_avgsoftmax_path, path_to_save_supergroup_pt, should_print_sg):
+def ModelVisualSimilarityMetric(model_avgsoftmax_path, path_to_save_supergroup_pt):
     # Load the average softmax
-    model_avgsoftmax = torch.load( model_avgsoftmax_path )
+    model_avgsoftmax = torch.load( model_avgsoftmax_path ,map_location=torch.device('cpu'))
     # Print number of classes
     number_of_classes = model_avgsoftmax.shape[0]
-    print("Number of classes: {}".format(number_of_classes))
     
     l = []
     for i in range(number_of_classes):
         l.append([i])
         for j in range(i,number_of_classes):
-            prob = SigmoidMembership(number_of_classes, model_avgsoftmax[i][0][j])
+            global grouping_volatility
+            prob = SigmoidMembership(number_of_classes, model_avgsoftmax[i][0][j], grouping_volatility)
             if np.random.choice(2, 100000, p = [1 - prob, prob]).mean() > 0.5:
                 if i != j:
                     l[i].append(j)
@@ -49,11 +54,7 @@ def ModelVisualSimilarityMetric(model_avgsoftmax_path, path_to_save_supergroup_p
             super_group_list.append(final_dict[i])
             for j in final_dict[i]:
                 seen.append(j)
-    ### Only print if flag is set
-    if should_print_sg == True:
-        for i in super_group_list:
-            i.sort()
-            print(i)
+    
         
     ### Save to file
     with open(path_to_save_supergroup_pt,'wb') as f:

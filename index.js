@@ -7,8 +7,10 @@ app.use(bodyParser.json());
 
 app.post('/', (req, res)=>{
   data = (req.body.data)
+  console.log(req.body)
   groupingCoeff = (req.body.groupingCoeff)
-  var dataToSend = "nothing";
+  sendback = {}
+  
     // spawn new child process to call the python script
   const python = spawn('py', ['./script.py', data, groupingCoeff], {shell:true});
   console.log(python.connected)
@@ -17,12 +19,15 @@ app.post('/', (req, res)=>{
     });
   
     // collect data from script
-  python.stdout.on('data', (data) => {
+  python.stdout.on('data', (output) => {
       console.log('Pipe data from python script ...');
-      dataToSend = data.toString();
-      console.log(`stdout:${data}`);
+      temp = output.toString().split('/ ')
+      console.log(`this is from js:${output.toString()}`);
+      sendback = {
+        Budsuper_group_list: JSON.parse(temp[0]),
+        number_of_groups:JSON.parse(temp[1])
+      }
   });
-  console.log(dataToSend)
   
   python.stderr.on('data', (data) => {
       console.error(`stderr: ${data}`);
@@ -33,7 +38,7 @@ app.post('/', (req, res)=>{
   python.on('close', (code) => {
       console.log(`child process close all stdio with code ${code}`);
         // send data to browser
-      res.send({data : {dataToSend}})
+      res.json(sendback)
   });
 })
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
