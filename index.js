@@ -13,18 +13,16 @@ app.post('/', (req, res)=>{
   
     // spawn new child process to call the python script
   const python = spawn('py', ['./script.py', data, groupingCoeff], {shell:true});
-  console.log(python.connected)
   python.on('error', (error) => {
       console.error(`Failed to spawn Python process: ${error}`);
     });
   
     // collect data from script
   python.stdout.on('data', (output) => {
-      console.log('Pipe data from python script ...');
       temp = output.toString().split('/ ')
-      console.log(`this is from js:${output.toString()}`);
+      console.log(`Returned data:\n${output.toString()}`);
       sendback = {
-        Budsuper_group_list: JSON.parse(temp[0]),
+        super_group_list: JSON.parse(temp[0]),
         number_of_groups:JSON.parse(temp[1])
       }
   });
@@ -41,7 +39,7 @@ app.post('/', (req, res)=>{
       res.json(sendback)
   });
 })
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.listen(port, () => console.log(`Backend for MNN website is now running on ${port}!`))
 
 
 
