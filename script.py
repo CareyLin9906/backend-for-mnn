@@ -4,9 +4,12 @@ import grouper
 
 
 data = sys.argv[1]
-
 grouping_volatility = sys.argv[2]
-avgsoftmax = "root_avgsoftmax.pth"
+avgsoftmax = "Kuzu49_root_avgsoftmax.pth"
+if data == "Kuzu_49":
+    avgsoftmax = "Kuzu49_root_avgsoftmax.pth"
+elif data == "Kuzu_Kanji":
+    avgsoftmax = "KuzuKanji_root_avgsoftmax.pth"
 classNumber = 5
 pickled_filename = avgsoftmax.replace('.pth','.pickle')
 grouper.set_grouping_volatility(grouping_volatility)
